@@ -1,0 +1,934 @@
+{
+  "lots": [
+    {
+      "name": "Risen 2: Dark Waters",
+      "amount": 5,
+      "contributors": []
+    },
+    {
+      "name": "Skyrim RFAB",
+      "amount": 4,
+      "contributors": []
+    },
+    {
+      "name": "Subnautica",
+      "amount": 4,
+      "contributors": []
+    },
+    {
+      "name": "ELEX",
+      "amount": 8,
+      "contributors": []
+    },
+    {
+      "name": "Хроники Миртаны : Архолос",
+      "amount": 3,
+      "contributors": []
+    },
+    {
+      "name": "Alan Wake",
+      "amount": 3,
+      "contributors": []
+    },
+    {
+      "name": "Маскарад вампиров линии крови с вырезанным контентом за малкава",
+      "amount": 3,
+      "contributors": []
+    },
+    {
+      "name": "South Park: The Stick of Truth",
+      "amount": 4,
+      "contributors": []
+    },
+    {
+      "name": "System Shock",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Phoenix Point",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Sudeki",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Outward",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Wolfenstein: The New Order",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Hunted: The Demon's Forge",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "vampires the masquerade redemption",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Dishonored",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "The Mortuary Assistant",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Drakensang 2",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "METAPHOR: REFANTAZIO",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Dead Space 3",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Company of Heroes",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Mount & Blade II: Bannerlord (Old Realms)",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Jump King DLC",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "S.W.I.N.E.",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Torment: Tides of Numenera",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Getting Over It with Bennett Foddy",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Football Manager 2005",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Lego Властелин колец",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Darkwood",
+      "amount": 3,
+      "contributors": []
+    },
+    {
+      "name": "Planetbase",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Prince of Persia",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Warcraft II",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Halo: Combat Evolved Anniversary",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Star Wars: Jedi Knight: Jedi Academy",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Sid Meier’s Civilization VI",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Castlevania: Lords of Shadow",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Космические рейнджеры 2",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Flame in the flood",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Test Drive Unlimited",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Resident Evil (Classic PS1)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Spyro Reignited Trilogy",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Mad Max",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Icewind Dale",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Resident Evil HD Remaster",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Oddworld",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Street Racing Syndicate",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Tom Clancy’s H.A.W.X",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Fear and hunger",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Half-life 2",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Long Dark",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "War Thunder (вкачать 1-ый ранг любой нации)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Tomb Rider: Anniversary",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Turok 2: Seeds of Evi",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Resident Evil 2 (classic)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Undertale",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Мор (утопия)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Pentiment",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Underground Man 2",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Грибная Эра",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "ex machina",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Longing",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Resident Evil 4",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Yakuza 7: Like a Dragon",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "THE INCREDIBLE HULK (2008)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Resident Evil 6",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Saiko No Sutoka (Yandere and Yangire mods)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "МГС 5",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Pandemonium",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "World of tanks прокачать ветку советской арты до максимума",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Революціонный квѣстъ",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Slime Rancher",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Warhammer 40,000 Mechanicus",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Sea of stars jrpg",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Fate/Stay Night (новелла)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The pedestrian",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Planet of Lana",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Rogue Trip: Vacation 2012",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Might & Magic Heroes VII",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "AMNESIA: THE DARK DESCENT",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Ghostrunner",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Fighting Force",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Chernobylite",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "DRAGON QUEST® XI S: Echoes of an Elusive Age - 3D режим",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Корпорация монстров (PS1)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "the password game https://neal.fun/password-game/",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Genshin",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "dragon's dogma",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "True Stalker",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Final Station",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Братья Пилоты: По следам полосатого слона",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Kentucky Route Zero",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Assassin’s Creed IV: Black Flag",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Смута",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Sifu",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Until Dawn",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Game of Sisyphus",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Jump off the bridge",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Mafia: Definitive Edition",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Dredge",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Test Drive Unlimited 2",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "FPV Kamikaze Drone",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Talisman: Digital Edition",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Bible",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Deus Ex: Mankind Divided",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "BUNNY GARDEN",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Бесконечное лето",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Mystery of the Druids",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "sid meier's pirates",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Warhammer 40,000: Dawn of War I",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Blood Omen 2: Legacy of Kain",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Stronghold",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Life is Starege",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Гарри Поттер Пс1 перевод Парадокс",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Onimusha 3",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Five Nights at Freddy's 2",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "divine divinity",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "SpongeBob SquarePants: Battle for Bikini Bottom",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Fable Anniversary",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Fallout 4",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Space Rangers HD: A War Apart",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Battletoads",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "DMC 3",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Va-11 Halla: Cyberpunk Bartender Action",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Path of Exile 2",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Soul Reaver",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Final Fantasy",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Last of Us",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Divinity: Original Sin",
+      "amount": 5,
+      "contributors": []
+    },
+    {
+      "name": "WITCH ON THE HOLY NIGHT",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Demon's Souls",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Wandering Village",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Obscure",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "The Age of Decadence",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "underrail",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "encased",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "colony ship",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "NEKOPARA",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Star Wars Jedi Knight II: Jedi Outcast",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Might and Magic VI: The Mandate of Heaven",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "SWTOR",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Umamusume: Pretty Derby",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Prototype",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Lord of the Rings: War of the Ring",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Voices of the Void",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "STRANGER OF PARADISE FINAL FANTASY ORIGIN",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "silent hill 2 remake",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "State of Decay 2: Juggernaut Edition",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Fallout: London",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Look Outside",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Mount and Blade: Prophecy of Pendor",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Crysis 2",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Hail to the Rainbow",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Painscreek Killings",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "State of Decay",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "My Winter Car",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Banquet for Fools",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Живые и мёртвые 2. Жёстко",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Elder Scrolls: Online",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Persona 4",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "RAIDOU REMASTERED: THE MYSTERY OF THE SOULLESS ARMY",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "ETRIAN ODYSSEY HD",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "ETRIAN ODYSSEY 2 HD",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Ananta",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Car Mechanic Simulator 2021",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "KINGDOM HEARTS",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "JUMP KING QUEST",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Quarantine Zone: The Last Check",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Penumbra",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Gothic: Remake",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Lords of the Fallen",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Tainted Grail: The Fall of Avalon",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Far Cry 3",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Thief 2014",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Level Devil",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Starbound",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Тургор",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Legend of Grimrock 2",
+      "amount": 3,
+      "contributors": []
+    },
+    {
+      "name": "Аллоды Онлайн",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Europa Universalis 5",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "The Blood of Dawnwalker",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Esoteric Ebb",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Zero Parades",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Avowed",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Solasta",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Закон Шляпки",
+      "amount": 2,
+      "contributors": []
+    },
+    {
+      "name": "Teenage Mutant Ninja Turtles (1989)",
+      "amount": 1,
+      "contributors": []
+    }
+  ]
+}

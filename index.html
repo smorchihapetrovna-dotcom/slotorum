@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Слоторум</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070712;
+    --surface: #140c22;
+    --fg: #ece8ff;
+    --muted: #9b92b8;
+    --primary: #ff66cc;
+    --primary2: #c41a7a;
+    --gold: #ffcc00;
+    --mint: #66ffcc;
+    --archive: #3d9b78;
+    --archive2: #1e4a3a;
+    --border: rgba(255, 102, 204, 0.28);
+    --border-a: rgba(61, 155, 120, 0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: Manrope, system-ui, sans-serif;
+    overflow: hidden;
+  }
+  button, [role="button"] { cursor: pointer; font-family: inherit; }
+  .viewport { height: 100dvh; width: 100%; overflow: hidden; position: relative; }
+  .track {
+    display: flex;
+    height: 100%;
+    width: 300%;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .panel { width: 33.3333%; height: 100%; position: relative; flex-shrink: 0; overflow: hidden; }
+
+  /* Hub */
+  .hub {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background: var(--bg);
+  }
+  .hub-side {
+    flex: 1 1 50%;
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    padding: 0;
+    min-width: 0;
+  }
+  .hub-side .bg-grad {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.4s ease, filter 0.4s ease;
+  }
+  /* Soft outer glow only — fully transparent toward the center */
+  .hub-side.left .bg-grad {
+    background:
+      radial-gradient(ellipse 90% 100% at 0% 50%, rgba(255,102,204,0.38) 0%, rgba(196,26,122,0.16) 38%, rgba(196,26,122,0.04) 62%, transparent 78%),
+      radial-gradient(ellipse 55% 70% at 15% 70%, rgba(255,102,204,0.12) 0%, transparent 70%);
+  }
+  .hub-side.right .bg-grad {
+    background:
+      radial-gradient(ellipse 90% 100% at 100% 50%, rgba(61,155,120,0.4) 0%, rgba(30,74,58,0.18) 38%, rgba(30,74,58,0.04) 62%, transparent 78%),
+      radial-gradient(ellipse 55% 70% at 85% 70%, rgba(61,155,120,0.12) 0%, transparent 70%);
+  }
+  .hub-side.left:hover .bg-grad,
+  .hub-side.left:focus-visible .bg-grad {
+    filter: brightness(1.25) saturate(1.2);
+    background:
+      radial-gradient(ellipse 95% 105% at 0% 50%, rgba(255,102,204,0.55) 0%, rgba(255,102,204,0.28) 36%, rgba(196,26,122,0.08) 60%, transparent 76%),
+      radial-gradient(ellipse 60% 75% at 18% 68%, rgba(255,102,204,0.22) 0%, transparent 70%);
+  }
+  .hub-side.right:hover .bg-grad,
+  .hub-side.right:focus-visible .bg-grad {
+    filter: brightness(1.25) saturate(1.2);
+    background:
+      radial-gradient(ellipse 95% 105% at 100% 50%, rgba(61,155,120,0.55) 0%, rgba(61,155,120,0.28) 36%, rgba(30,74,58,0.08) 60%, transparent 76%),
+      radial-gradient(ellipse 60% 75% at 82% 68%, rgba(61,155,120,0.22) 0%, transparent 70%);
+  }
+  /* Character silhouettes inside the glow */
+  .hub-figure {
+    position: absolute;
+    bottom: 0;
+    height: 70vh;
+    max-height: 70vh;
+    width: auto;
+    max-width: none;
+    object-fit: contain;
+    object-position: bottom center;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.06;
+    transition: opacity 0.45s ease, filter 0.45s ease;
+    filter: drop-shadow(0 0 20px rgba(255,102,204,0.25));
+  }
+  .hub-side.left .hub-figure {
+    left: 0;
+    transform: none;
+  }
+  .hub-side.right .hub-figure {
+    right: 0;
+    left: auto;
+    transform: none;
+    filter: drop-shadow(0 0 20px rgba(61,155,120,0.25));
+  }
+  .hub-side.left:hover .hub-figure,
+  .hub-side.left:focus-visible .hub-figure {
+    opacity: 0.22;
+    filter: drop-shadow(0 0 32px rgba(255,102,204,0.45));
+  }
+  .hub-side.right:hover .hub-figure,
+  .hub-side.right:focus-visible .hub-figure {
+    opacity: 0.22;
+    filter: drop-shadow(0 0 32px rgba(61,155,120,0.45));
+  }
+  .hub-label {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+    padding: 1.5rem;
+  }
+  .hub-label h2 {
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(0.85rem, 2.4vw, 1.4rem);
+    line-height: 1.55;
+    text-shadow: 0 0 18px currentColor, 0 2px 12px rgba(0,0,0,0.65);
+  }
+  .hub-side.left .hub-label h2 { color: var(--primary); }
+  .hub-side.right .hub-label h2 { color: var(--archive); }
+
+  /* Continuous side glow so hub transition has no hard edge */
+  .panel-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .panel.stream .panel-glow {
+    background:
+      radial-gradient(ellipse 70% 100% at 100% 50%, rgba(255,102,204,0.34) 0%, rgba(196,26,122,0.14) 40%, transparent 72%),
+      radial-gradient(ellipse 45% 70% at 85% 70%, rgba(255,102,204,0.1) 0%, transparent 70%);
+  }
+  .panel.archive .panel-glow {
+    background:
+      radial-gradient(ellipse 70% 100% at 0% 50%, rgba(61,155,120,0.36) 0%, rgba(30,74,58,0.16) 40%, transparent 72%),
+      radial-gradient(ellipse 45% 70% at 15% 70%, rgba(61,155,120,0.1) 0%, transparent 70%);
+  }
+
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .float-img {
+    position: absolute;
+    border-radius: 14px;
+    object-fit: cover;
+    opacity: 0.3;
+    border: 2px solid rgba(255,102,204,0.35);
+    box-shadow: 0 0 40px rgba(255,102,204,0.35);
+    animation-name: fly;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+  .float-img.archive {
+    border-color: rgba(61,155,120,0.4);
+    box-shadow: 0 0 40px rgba(61,155,120,0.35);
+  }
+  @keyframes fly {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    20%  { transform: translate(var(--x1), var(--y1)) rotate(var(--r1)) scale(1.08); }
+    40%  { transform: translate(var(--x2), var(--y2)) rotate(var(--r2)) scale(0.94); }
+    60%  { transform: translate(var(--x3), var(--y3)) rotate(var(--r3)) scale(1.1); }
+    80%  { transform: translate(var(--x4), var(--y4)) rotate(var(--r4)) scale(0.97); }
+    100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1rem 1.25rem;
+  }
+  .content-inner {
+    max-width: 56rem;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+  .panel-head h1 {
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(0.7rem, 2vw, 1rem);
+    line-height: 1.5;
+  }
+  .panel.stream .panel-head h1 { color: var(--primary); text-shadow: 0 0 12px var(--primary); }
+  .panel.archive .panel-head h1 { color: var(--archive); text-shadow: 0 0 12px var(--archive); }
+
+  .search-wrap { position: relative; margin-bottom: 0.85rem; }
+  .search-wrap input {
+    width: 100%;
+    height: 3rem;
+    border-radius: 0.85rem;
+    border: 1px solid var(--border);
+    background: rgba(20,12,34,0.92);
+    color: var(--fg);
+    padding: 0 1rem 0 2.75rem;
+    font-size: 1rem;
+    outline: none;
+  }
+  .panel.archive .search-wrap input { border-color: var(--border-a); }
+  .search-wrap input:focus { border-color: var(--primary); }
+  .panel.archive .search-wrap input:focus { border-color: var(--archive); }
+  .search-wrap svg {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.85rem; }
+  .chip {
+    height: 2.1rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-a);
+    background: rgba(20,12,34,0.75);
+    color: var(--fg);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .chip.active { background: var(--archive); color: var(--bg); border-color: transparent; }
+  .sort-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.85rem; align-items: center; }
+  .sort-bar .label { color: var(--muted); font-size: 0.85rem; margin-right: 0.25rem; }
+  .sort-btn {
+    height: 2.1rem; padding: 0 0.85rem; border-radius: 999px;
+    border: 1px solid var(--border-a); background: rgba(20,12,34,0.75);
+    color: var(--fg); font-size: 0.85rem; font-weight: 600;
+  }
+  .sort-btn.active { background: var(--archive); color: var(--bg); border-color: transparent; }
+
+  .table-wrap, .archive-list {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    background: rgba(20,12,34,0.92);
+  }
+  .panel.archive .archive-list { border: none; background: transparent; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { position: sticky; top: 0; z-index: 1; }
+  th {
+    background: linear-gradient(90deg, var(--primary2), var(--primary));
+    color: #fff;
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.62rem;
+    padding: 0.85rem 1rem;
+    text-align: left;
+  }
+  th:nth-child(2), th:nth-child(3) { text-align: center; width: 5.5rem; }
+  td { padding: 0.7rem 1rem; border-bottom: 1px solid rgba(255,102,204,0.12); }
+  tr:nth-child(even) { background: rgba(255,102,204,0.05); }
+  tr:hover { background: rgba(255,102,204,0.14); }
+  .game-cell { display: flex; align-items: center; gap: 0.85rem; }
+  .rank {
+    width: 1.9rem; height: 1.9rem; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #333; font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+  }
+  .rank-1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #111; }
+  .rank-2 { background: linear-gradient(135deg, #e0e0e0, #a8a8a8); color: #111; }
+  .rank-3 { background: linear-gradient(135deg, #cd7f32, #a05a2c); color: #fff; }
+  .pts { text-align: center; font-weight: 800; font-size: 1.1rem; color: var(--gold); text-shadow: 0 0 8px #ffaa00; }
+  .chance { text-align: center; font-weight: 700; color: var(--mint); }
+
+  .cat-block {
+    margin-bottom: 0.85rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-a);
+    background: rgba(20,12,34,0.92);
+    overflow: hidden;
+  }
+  .cat-block h2 {
+    background: var(--archive2);
+    color: var(--archive);
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.68rem;
+    padding: 0.7rem 1rem;
+  }
+  .cat-block h2 span { font-family: Manrope, sans-serif; color: var(--muted); margin-left: 0.4rem; font-size: 0.8rem; }
+  .cat-block a, .cat-block .nolink {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 1rem; color: var(--fg); text-decoration: none;
+    border-top: 1px solid rgba(61,155,120,0.2);
+  }
+  .cat-block a:hover { background: rgba(61,155,120,0.12); color: var(--mint); }
+
+  .foot { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 0.65rem; }
+
+  /* Horizontal back control on the edge */
+  .side-zone {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: min(22%, 9rem);
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    opacity: 0.65;
+    transition: opacity 0.25s, background 0.25s, color 0.25s;
+  }
+  .side-zone:hover, .side-zone:focus-visible {
+    opacity: 1;
+    color: var(--fg);
+  }
+  .side-zone.left { left: 0; background: linear-gradient(90deg, rgba(0,0,0,0.28), transparent); }
+  .side-zone.right { right: 0; background: linear-gradient(270deg, rgba(0,0,0,0.28), transparent); }
+  .side-zone span {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .content.has-side-left { padding-left: max(1rem, min(22%, 9rem)); }
+  .content.has-side-right { padding-right: max(1rem, min(22%, 9rem)); }
+
+  .chance-help {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    z-index: 9;
+    max-width: 20rem;
+    background: rgba(15,10,30,0.95);
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    font-size: 0.85rem;
+  }
+  .chance-help summary {
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--primary);
+    list-style: none;
+  }
+  .chance-help summary::-webkit-details-marker { display: none; }
+  .chance-help .body { padding: 0 0.9rem 0.9rem; color: var(--muted); line-height: 1.5; }
+
+  @media (max-width: 700px) {
+    .side-zone { width: 4.2rem; }
+    .side-zone span { font-size: 0.8rem; }
+    .content.has-side-left { padding-left: 4.4rem; }
+    .content.has-side-right { padding-right: 4.4rem; }
+    th { font-size: 0.55rem; padding: 0.65rem 0.55rem; }
+    td { padding: 0.55rem 0.55rem; font-size: 0.9rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track, .float-img { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="viewport" id="viewport">
+  <div class="track" id="track">
+    <section class="panel stream" id="panel-stream">
+      <div class="bg-layer" id="bg-stream"></div>
+      <div class="panel-glow" aria-hidden="true"></div>
+      <button type="button" class="side-zone right" id="back-from-stream" aria-label="Назад">
+        <span>Назад</span>
+      </button>
+      <div class="content has-side-right">
+        <div class="content-inner">
+          <div class="panel-head"><h1>Список игр для стрима</h1></div>
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            <input id="stream-search" type="search" placeholder="Поиск по названию…" aria-label="Поиск">
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Игра</th><th>Баллы</th><th>Шанс</th></tr></thead>
+              <tbody id="stream-body"></tbody>
+            </table>
+          </div>
+          <p class="foot" id="stream-foot"></p>
+        </div>
+      </div>
+      <details class="chance-help">
+        <summary>Как считается шанс выпадения</summary>
+        <div class="body">
+          <p>Баллы возводятся в квадрат: вес = баллы × баллы.</p>
+          <p style="margin-top:0.5rem">Шанс = вес игры ÷ сумма весов всех игр.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel" id="panel-hub">
+      <div class="hub" id="hub">
+        <button type="button" class="hub-side left" id="go-stream" aria-label="Список игр на стрим">
+          <div class="bg-grad"></div>
+          <img class="hub-figure" src="images/slot_holder.png" alt="" decoding="async">
+          <div class="hub-label">
+            <h2>Список игр<br>на стрим</h2>
+          </div>
+        </button>
+        <button type="button" class="hub-side right" id="go-archive" aria-label="Пройденные игры">
+          <div class="bg-grad"></div>
+          <img class="hub-figure" src="images/complete_mirror.png" alt="" decoding="async">
+          <div class="hub-label">
+            <h2>Пройденные<br>игры</h2>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <section class="panel archive" id="panel-archive">
+      <div class="bg-layer" id="bg-archive"></div>
+      <div class="panel-glow" aria-hidden="true"></div>
+      <button type="button" class="side-zone left" id="back-from-archive" aria-label="Назад">
+        <span>Назад</span>
+      </button>
+      <div class="content has-side-left">
+        <div class="content-inner">
+          <div class="panel-head"><h1>Пройденные игры</h1></div>
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            <input id="archive-search" type="search" placeholder="Поиск по названию…" aria-label="Поиск">
+          </div>
+          <div class="sort-bar" id="archive-sort">
+            <span class="label">Сортировка:</span>
+            <button type="button" class="sort-btn active" data-sort="chrono">По хронологии</button>
+            <button type="button" class="sort-btn" data-sort="alpha">По алфавиту</button>
+          </div>
+          <div class="chips" id="archive-chips"></div>
+          <div class="archive-list" id="archive-list"></div>
+          <p class="foot" id="archive-foot"></p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const EMBEDDED_STREAM = {"lots":[{"name":"Pillars of Eternity 2","amount":15,"contributors":[]},{"name":"Darksiders","amount":10,"contributors":[]},{"name":"No One Lives Forever 2","amount":8,"contributors":[]},{"name":"Risen 2: Dark Waters","amount":5,"contributors":[]},{"name":"Skyrim RFAB","amount":4,"contributors":[]},{"name":"project zomboid","amount":4,"contributors":[]},{"name":"Subnautica","amount":4,"contributors":[]},{"name":"ELEX","amount":6,"contributors":[]},{"name":"Legend of Grimrock","amount":3,"contributors":[]},{"name":"Хроники Миртаны : Архолос","amount":3,"contributors":[]},{"name":"Alan Wake","amount":3,"contributors":[]},{"name":"Маскарад вампиров линии крови с вырезанным контентом за малкава","amount":3,"contributors":[]},{"name":"South Park: The Stick of Truth","amount":3,"contributors":[]},{"name":"Atomic Heart","amount":4,"contributors":[]},{"name":"System Shock","amount":2,"contributors":[]},{"name":"Phoenix Point","amount":2,"contributors":[]},{"name":"Sudeki","amount":2,"contributors":[]},{"name":"Outward","amount":2,"contributors":[]},{"name":"Homeworld","amount":2,"contributors":[]},{"name":"Wolfenstein: The New Order","amount":2,"contributors":[]},{"name":"Hunted: The Demon's Forge","amount":2,"contributors":[]},{"name":"vampires the masquerade redemption","amount":2,"contributors":[]},{"name":"Dishonored","amount":2,"contributors":[]},{"name":"The Mortuary Assistant","amount":2,"contributors":[]},{"name":"Drakensang 2","amount":2,"contributors":[]},{"name":"METAPHOR: REFANTAZIO","amount":2,"contributors":[]},{"name":"Dead Space 3","amount":2,"contributors":[]},{"name":"Company of Heroes","amount":2,"contributors":[]},{"name":"Mount & Blade II: Bannerlord (Old Realms)","amount":2,"contributors":[]},{"name":"Jump King DLC","amount":1,"contributors":[]},{"name":"S.W.I.N.E.","amount":1,"contributors":[]},{"name":"Torment: Tides of Numenera","amount":1,"contributors":[]},{"name":"Getting Over It with Bennett Foddy","amount":1,"contributors":[]},{"name":"Football Manager 2005","amount":1,"contributors":[]},{"name":"Lego Властелин колец","amount":1,"contributors":[]},{"name":"Darkwood","amount":1,"contributors":[]},{"name":"Planetbase","amount":1,"contributors":[]},{"name":"Prince of Persia","amount":1,"contributors":[]},{"name":"Warcraft II","amount":1,"contributors":[]},{"name":"Halo: Combat Evolved Anniversary","amount":1,"contributors":[]},{"name":"Star Wars: Jedi Knight: Jedi Academy","amount":1,"contributors":[]},{"name":"Grand Theft Auto 2","amount":1,"contributors":[]},{"name":"Sid Meier’s Civilization VI","amount":1,"contributors":[]},{"name":"Castlevania: Lords of Shadow","amount":1,"contributors":[]},{"name":"Космические рейнджеры 2","amount":1,"contributors":[]},{"name":"The Flame in the flood","amount":1,"contributors":[]},{"name":"Test Drive Unlimited","amount":1,"contributors":[]},{"name":"Resident Evil (Classic PS1)","amount":1,"contributors":[]},{"name":"Spyro Reignited Trilogy","amount":1,"contributors":[]},{"name":"Mad Max","amount":1,"contributors":[]},{"name":"Icewind Dale","amount":1,"contributors":[]},{"name":"Resident Evil HD Remaster","amount":1,"contributors":[]},{"name":"Oddworld","amount":1,"contributors":[]},{"name":"Street Racing Syndicate","amount":1,"contributors":[]},{"name":"Tom Clancy’s H.A.W.X","amount":1,"contributors":[]},{"name":"Fear and hunger","amount":1,"contributors":[]},{"name":"Half-life 2","amount":1,"contributors":[]},{"name":"The Long Dark","amount":1,"contributors":[]},{"name":"War Thunder (вкачать 1-ый ранг любой нации)","amount":1,"contributors":[]},{"name":"Tomb Rider: Anniversary","amount":1,"contributors":[]},{"name":"Turok 2: Seeds of Evi","amount":1,"contributors":[]},{"name":"Resident Evil 2 (classic)","amount":1,"contributors":[]},{"name":"Undertale","amount":1,"contributors":[]},{"name":"Мор (утопия)","amount":1,"contributors":[]},{"name":"Pentiment","amount":1,"contributors":[]},{"name":"super mario bros. 1985","amount":1,"contributors":[]},{"name":"The Underground Man 2","amount":1,"contributors":[]},{"name":"Грибная Эра","amount":1,"contributors":[]},{"name":"ex machina","amount":1,"contributors":[]},{"name":"The Longing","amount":1,"contributors":[]},{"name":"Resident Evil 4","amount":1,"contributors":[]},{"name":"Yakuza 7: Like a Dragon","amount":1,"contributors":[]},{"name":"THE INCREDIBLE HULK (2008)","amount":1,"contributors":[]},{"name":"Resident Evil 6","amount":1,"contributors":[]},{"name":"The Dungeon Of Naheulbeuk: The Amulet Of Chaos","amount":1,"contributors":[]},{"name":"Saiko No Sutoka (Yandere and Yangire mods)","amount":1,"contributors":[]},{"name":"МГС 5","amount":1,"contributors":[]},{"name":"Pandemonium","amount":1,"contributors":[]},{"name":"World of tanks прокачать ветку советской арты до максимума","amount":1,"contributors":[]},{"name":"Революціонный квѣстъ","amount":1,"contributors":[]},{"name":"Slime Rancher","amount":1,"contributors":[]},{"name":"Warhammer 40,000 Mechanicus","amount":1,"contributors":[]},{"name":"Sea of stars jrpg","amount":1,"contributors":[]},{"name":"Fate/Stay Night (новелла)","amount":1,"contributors":[]},{"name":"The pedestrian","amount":1,"contributors":[]},{"name":"Planet of Lana","amount":1,"contributors":[]},{"name":"Rogue Trip: Vacation 2012","amount":1,"contributors":[]},{"name":"Might & Magic Heroes VII","amount":1,"contributors":[]},{"name":"AMNESIA: THE DARK DESCENT","amount":1,"contributors":[]},{"name":"Ghostrunner","amount":1,"contributors":[]},{"name":"Fighting Force","amount":1,"contributors":[]},{"name":"Chernobylite","amount":1,"contributors":[]},{"name":"DRAGON QUEST® XI S: Echoes of an Elusive Age - 3D режим","amount":1,"contributors":[]},{"name":"Корпорация монстров (PS1)","amount":1,"contributors":[]},{"name":"the password game https://neal.fun/password-game/","amount":1,"contributors":[]},{"name":"Genshin","amount":1,"contributors":[]},{"name":"dragon's dogma","amount":1,"contributors":[]},{"name":"True Stalker","amount":1,"contributors":[]},{"name":"The Final Station","amount":1,"contributors":[]},{"name":"Братья Пилоты: По следам полосатого слона","amount":1,"contributors":[]},{"name":"Kentucky Route Zero","amount":1,"contributors":[]},{"name":"Assassin’s Creed IV: Black Flag","amount":1,"contributors":[]},{"name":"Смута","amount":1,"contributors":[]},{"name":"Sifu","amount":1,"contributors":[]},{"name":"Until Dawn","amount":1,"contributors":[]},{"name":"The Game of Sisyphus","amount":1,"contributors":[]},{"name":"Jump off the bridge","amount":1,"contributors":[]},{"name":"Mafia: Definitive Edition","amount":1,"contributors":[]},{"name":"Dredge","amount":1,"contributors":[]},{"name":"Test Drive Unlimited 2","amount":1,"contributors":[]},{"name":"FPV Kamikaze Drone","amount":1,"contributors":[]},{"name":"Talisman: Digital Edition","amount":1,"contributors":[]},{"name":"The Bible","amount":1,"contributors":[]},{"name":"Deus Ex: Mankind Divided","amount":1,"contributors":[]},{"name":"BUNNY GARDEN","amount":1,"contributors":[]},{"name":"Бесконечное лето","amount":1,"contributors":[]},{"name":"The Mystery of the Druids","amount":1,"contributors":[]},{"name":"sid meier's pirates","amount":1,"contributors":[]},{"name":"Warhammer 40,000: Dawn of War I","amount":1,"contributors":[]},{"name":"Blood Omen 2: Legacy of Kain","amount":1,"contributors":[]},{"name":"Stronghold","amount":1,"contributors":[]},{"name":"Life is Starege","amount":1,"contributors":[]},{"name":"Гарри Поттер Пс1 перевод Парадокс","amount":1,"contributors":[]},{"name":"Onimusha 3","amount":1,"contributors":[]},{"name":"Five Nights at Freddy's 2","amount":1,"contributors":[]},{"name":"divine divinity","amount":1,"contributors":[]},{"name":"SpongeBob SquarePants: Battle for Bikini Bottom","amount":1,"contributors":[]},{"name":"Fable Anniversary","amount":1,"contributors":[]},{"name":"Fallout 4","amount":1,"contributors":[]},{"name":"Space Rangers HD: A War Apart","amount":1,"contributors":[]},{"name":"Battletoads","amount":1,"contributors":[]},{"name":"DMC 3","amount":1,"contributors":[]},{"name":"Va-11 Halla: Cyberpunk Bartender Action","amount":1,"contributors":[]},{"name":"Path of Exile 2","amount":1,"contributors":[]},{"name":"Soul Reaver","amount":1,"contributors":[]},{"name":"Age of Darkness: Final Stand","amount":1,"contributors":[]},{"name":"Final Fantasy","amount":1,"contributors":[]},{"name":"The Last of Us","amount":1,"contributors":[]},{"name":"Divinity: Original Sin","amount":1,"contributors":[]},{"name":"WITCH ON THE HOLY NIGHT","amount":1,"contributors":[]},{"name":"Demon's Souls","amount":1,"contributors":[]},{"name":"The Wandering Village","amount":1,"contributors":[]},{"name":"Obscure","amount":1,"contributors":[]},{"name":"The Age of Decadence","amount":1,"contributors":[]},{"name":"underrail","amount":1,"contributors":[]},{"name":"encased","amount":1,"contributors":[]},{"name":"colony ship","amount":1,"contributors":[]},{"name":"NEKOPARA","amount":1,"contributors":[]},{"name":"Star Wars Jedi Knight II: Jedi Outcast","amount":1,"contributors":[]},{"name":"Might and Magic VI: The Mandate of Heaven","amount":1,"contributors":[]},{"name":"SWTOR","amount":1,"contributors":[]},{"name":"Umamusume: Pretty Derby","amount":1,"contributors":[]},{"name":"Prototype","amount":1,"contributors":[]},{"name":"The Lord of the Rings: War of the Ring","amount":1,"contributors":[]},{"name":"Voices of the Void","amount":1,"contributors":[]},{"name":"STRANGER OF PARADISE FINAL FANTASY ORIGIN","amount":1,"contributors":[]},{"name":"silent hill 2 remake","amount":1,"contributors":[]},{"name":"State of Decay 2: Juggernaut Edition","amount":1,"contributors":[]},{"name":"Fallout: London","amount":1,"contributors":[]},{"name":"Look Outside","amount":1,"contributors":[]},{"name":"Mount and Blade: Prophecy of Pendor","amount":1,"contributors":[]},{"name":"Crysis 2","amount":1,"contributors":[]},{"name":"Hail to the Rainbow","amount":1,"contributors":[]},{"name":"The Painscreek Killings","amount":1,"contributors":[]},{"name":"State of Decay","amount":1,"contributors":[]},{"name":"My Winter Car","amount":1,"contributors":[]},{"name":"Banquet for Fools","amount":1,"contributors":[]},{"name":"Живые и мёртвые 2. Жёстко","amount":1,"contributors":[]},{"name":"The Elder Scrolls: Online","amount":1,"contributors":[]},{"name":"Persona 4","amount":1,"contributors":[]},{"name":"RAIDOU REMASTERED: THE MYSTERY OF THE SOULLESS ARMY","amount":1,"contributors":[]},{"name":"ETRIAN ODYSSEY HD","amount":1,"contributors":[]},{"name":"ETRIAN ODYSSEY 2 HD","amount":1,"contributors":[]},{"name":"Ananta","amount":1,"contributors":[]},{"name":"Car Mechanic Simulator 2021","amount":1,"contributors":[]},{"name":"KINGDOM HEARTS","amount":1,"contributors":[]},{"name":"JUMP KING QUEST","amount":1,"contributors":[]},{"name":"Quarantine Zone: The Last Check","amount":1,"contributors":[]},{"name":"Penumbra","amount":1,"contributors":[]},{"name":"Gothic: Remake","amount":1,"contributors":[]},{"name":"Lords of the Fallen","amount":1,"contributors":[]},{"name":"Tainted Grail: The Fall of Avalon","amount":1,"contributors":[]},{"name":"Far Cry 3","amount":1,"contributors":[]},{"name":"Thief 2014","amount":1,"contributors":[]},{"name":"Level Devil","amount":1,"contributors":[]},{"name":"Starbound","amount":1,"contributors":[]},{"name":"Тургор","amount":2,"contributors":[]}]};
+const EMBEDDED_COMPLETED = [{"category":"Стратегии","games":[{"name":"Age of Empires II: Definitive Edition","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPsx2yFvdXRbWbSM3czgVuP","order":153},{"name":"Age of Empires III (+дополнения)","url":null,"order":1},{"name":"Age of Mythology","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOIzGtVnwc2os0jLqjX2Oqg","order":173},{"name":"Age of Wonders: Planetfall","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANXdbrF9Y3eIeHa9Fn7zCFf","order":156},{"name":"Ash of Gods: Redemption","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOZ0a3yMGM5rgpSiFmmtHhQ","order":30},{"name":"Battlefleet Gothic: Armada","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOyiZwyHVs0svw3XESPp2-8","order":196},{"name":"Command & Conquer: Red Alert 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOzyUvCwx927z9_cZts7AGm","order":164},{"name":"Disciples III: Reincarnation","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOS5iZREG-aYu0yKte0UPnn","order":105},{"name":"Europa Universalis IV (за Англию)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP0YcssFKcDUXyaUpoKOPPu","order":7},{"name":"Frostpunk","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANYC6HFeOyBEoVyP1a1RmVJ","order":72},{"name":"Heroes of Might and Magic III","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMNhLf8rxyCKkZvQVUIHwsU","order":165},{"name":"Heroes of Might and Magic V","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMpmLhxEQx-Q_uh5Jgfk6VY","order":148},{"name":"Majesty 2: The Fantasy Kingdom Sim","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANeJzYIbA9NqH3vBC3YoMKU","order":132},{"name":"Majesty Gold HD","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAODEQAXcCZkmqK7Jas2r2aM","order":99},{"name":"Perimeter","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOeXQRhSOkpmnUU44WeDzFq","order":181},{"name":"Rimworld","url":"https://www.youtube.com/playlist?list=PLfKAC7PevttQ","order":214},{"name":"Rise of Nations: Rise of Legends","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPyOi-vvBbu4uf10SOZRXRA","order":63},{"name":"Sacrifice","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANkdyRx93kOCmN4c5HW5RDM","order":107},{"name":"Solium Infernum","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANOe1J-VnzS9A8y2juD6amd","order":202},{"name":"Spellforce Platinum Edition","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMiXeV1MCGO7mIbMzZG2GUO","order":203},{"name":"Star Craft II","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO7Q7hEwgy2rM89SI0bkFpK","order":147},{"name":"Stellaris","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOV4KaDotExDOHfEjjEFxWc","order":125},{"name":"The Banner Saga","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANhe5XgOsJp8NM7JoclPYtc","order":17},{"name":"The Banner Saga 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPRHJjdw89V3y8v5ZWEA7NV","order":18},{"name":"The Banner Saga 3","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAM5bDR3Fa2eDzIktfbzSDLK","order":19},{"name":"Thea: The Awakening","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAPFn3mnsTwI2clZshXwtiVs&si=geEmv4THwdg6nJwu","order":78},{"name":"They Are Billions","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANqoFjZIZeD4wGoC5U0wRdr","order":64},{"name":"This is the Police","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOC-OwUEplsFXuXBOXQ62uS","order":44},{"name":"This is the Police 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPzs78V8Et5Acb35eU67Off","order":48},{"name":"Total War: Medieval II — Bulat Steel","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMRAv2eS8v09OkWufQy29Rk","order":172},{"name":"Total War: Warhammer III","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOvvJBoILpVG_MnmSmJprMn","order":115},{"name":"Warcraft III","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMpmu8gVw_uV9UVwgQmEN0M","order":59},{"name":"Warhammer 40,000: Chaos Gate","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAPGFva_-BfsFFqUh_NfwVhf&si=MA0_-GlQHuKTgyvM","order":207},{"name":"XCOM: Enemy Unknown (Within)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMk2xvEADdyhxgyo32bK5gJ","order":57},{"name":"Z","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMzu0659YGuIcPmjS2UApd7","order":177}]},{"category":"Бродилки","games":[{"name":"Живые и мертвые (мод-аддон для Oblivion)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMiufJw1NG6cre-T_6nDLMJ","order":92},{"name":"Проклятые земли","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMjve_yHue9Sp2sGJos8Ue2","order":86},{"name":"Arcania: Gothic 4","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPfWgCGYSXWlVjrqT8jm_mm","order":36},{"name":"Arcanum: Of Steamworks and Magick Obscura","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMUnitt6O90BSz1ladvu4eu","order":29},{"name":"Arx Fatalis","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANbbt9QVqyYL4bXSTSUlZ8c","order":56},{"name":"ATOM RPG","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANI82ZI_85FQ4KDA_GTJx-O","order":49},{"name":"Baldur's Gate","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAM4jIE15gZlwV5ozIYjpgiL","order":42},{"name":"Baldur’s Gate II","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMHSxR6V2jlnNip9N_uI_d8","order":67},{"name":"Baldur’s Gate III","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPnP9KY26cQMgp9QMsgxXXL","order":120},{"name":"Clair Obscur: Expedition 33","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMIPzYxMpl-2mzrTEA7GklR","order":197},{"name":"Cyberpunk 2077","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOAozYZFzkKVuYtz7Hs8tu_","order":180},{"name":"Dark Souls","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAPQSJyX6bx3FPEvwA0d_zw4&si=NH8xAoThARr_XAsu","order":111},{"name":"DARK SOULS II: Scholar of the First Sin","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO79qqXDLXvAJdXAgh_dZjI","order":152},{"name":"Dark Souls III","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPOWB3YSb1p3ChOq06XzAKJ","order":171},{"name":"Diablo II: Lord of Destruction","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAODlJH2K_WFHSFze5Wmhqd1","order":28},{"name":"Diablo: Hellfire","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPcUcYaa5aaYemwGhB2XjTf","order":27},{"name":"Disco Elysium","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO8TIWIR8evZ8FgPEdtACHP","order":66},{"name":"Dragon Age II","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANYGP0gGz9ffosSPdw0krLD","order":58},{"name":"Dragon Age: Inquisition","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANmidU-CysxCl-BTCb1ODFS","order":186},{"name":"Dragon Age: Origins","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAODuDoX3sgZ2TmgY_l3KHe6","order":53},{"name":"Drakensang","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAN9ru2QoVmMEuO1FwloVuso","order":178},{"name":"Elden Ring","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMSo_-OHsYVPzKNMsE9D5B3","order":189},{"name":"Enderal: Forgotten Stories","url":"https://youtube.com/playlist?list=PLRdq1GBhJcXk&si=7yoyDznIs7-jj_z-","order":210},{"name":"Fallout","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOuCVXDWWBuLRstWQpzjKOL","order":5},{"name":"Fallout 1.5: Resurrection","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANL3NB0lzPfdkJlYuHl1O42","order":5},{"name":"Fallout 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO1znixXX-j0ZGXcpjDPO2o","order":6},{"name":"Fallout 3","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANdIDVHyeVx7_oRAKG0RtqH","order":41},{"name":"Fallout of Nevada","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOyUcG0T5tEVZfSHD-NImeJ","order":9},{"name":"Fallout: New Vegas","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMxyUj4foBc_MboPXLdD_sU","order":24},{"name":"Fallout: Sonora","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPaxf6PkwUFBXTMD03R_r04","order":15},{"name":"Final Fantasy VII","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPyQfwVYgl5Z12K8333DXy8","order":21},{"name":"Gothic","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPGNN4LefSKkBeZTYWuNEmV","order":8},{"name":"Gothic (без смертей)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANbXS3ADrm62VLudOTOkAQq","order":136},{"name":"Gothic 3","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO6NNGUfeMUjx2FYKs0N-bP","order":34},{"name":"Gothic 3: Forsaken Gods","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANuK8A97efDli9OCSWW6HWa","order":35},{"name":"Gothic II: Night of the Raven","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAM5aJvdswYC3gTmFvYWv5X4","order":10},{"name":"GreedFall","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPqfWbYVjMwgfoAqL6AIUrP","order":123},{"name":"Heroines of Swords & Spells","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMn8HAGq3uDCphnSHYqQkHn","order":65},{"name":"Honkai: Star Rail","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOUL2Sc9aGdny1azlnz-nF_","order":122},{"name":"Kenshi","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMU_t97RJVPP8oKhrdIYcof","order":188},{"name":"Kingdom Come: Deliverance","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANEYTa417DCNe6PGm1Qa3t9","order":142},{"name":"Kingdom Come: Deliverance II","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOkRpEbkgs6a-vjOExbWV6U","order":166},{"name":"Kingdoms of Amalur: Reckoning","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANiFnmrPI8Q4-uVTB4l53dJ","order":190},{"name":"Lies of P","url":"https://www.youtube.com/playlist?list=PLCdYQqSEuQ24","order":212},{"name":"Might and Magic VII","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANYamSs0WfapDY-bqjHzkpv","order":179},{"name":"Might and Magic VIII","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP9YtTkXQy06UdyzIxp26GI","order":145},{"name":"Mount & Blade II: Bannerlord","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPXvo8bL49nvD_TCFrO16Xi","order":161},{"name":"Mount & Blade II: Bannerlord - War Sails","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOWBQ_1Zz_X9Fo0VvFSoET5","order":192},{"name":"Mount & Blade Warband: Viking Conquest (сюжет)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPYWRFLa8TU3leAnCVfxOL4","order":23},{"name":"Nehrim: At Fate's Edge","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOll1C0WPuBo3crho6CHgrY","order":108},{"name":"Neverwinter Nights","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPBcSV5vXLkB_tPtY-jfaOT","order":71},{"name":"Pathfinder: Kingmaker","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAN3i0JD_LJGY7dDJlsom4BI","order":169},{"name":"Pathfinder: Wrath of the Righteouss","url":"https://youtube.com/playlist?list=PLQdZmXUpEXANNxKMOd8QV-v-rYt2SBKum&si=SrSnmT8JPviW7cs5","order":209},{"name":"Persona 3 Reload","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMcFImVfZfQEAc3GUBRM575","order":198},{"name":"Persona 5 Royal","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAPULgcTZRqhdfaYaoNcrPPt&si=45KNVy064SCHTk2P","order":206},{"name":"Pillars of Eternity","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANwWDr7mE6J0pjd9b9nRtUC","order":62},{"name":"Planescape: Torment: Enhanced Edition","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOTpmIr1jgIkTNpIGNpGhf3","order":3},{"name":"Risen","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPAATs5LfjmIyM31WriaZrB","order":38},{"name":"Risen 2: Dark Waters","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANCzDcrTsUsIHp0lswSoFXC","order":39},{"name":"Risen 3: Titan Lords","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAN6PzwvwtGwE8EpBhlVkxqR","order":40},{"name":"Sekiro: Shadows Die Twice","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMZwDoUIAH1sZ0vRviPz2KT","order":135},{"name":"Star Wars: Knights of the Old Republic","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMrthk1GAd_jogqgtxbu7Lt","order":43},{"name":"Star Wars: Knights of the Old Republic II — The Sith Lords","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP3fabYxglvFmVS9XFvt-hI","order":45},{"name":"Tales of Berseria","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANLhtdqSnU-orji7fdj2nt3","order":183},{"name":"The Age of Decadence","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPAI66suDewykqDyW73byRF","order":103},{"name":"The Elder Scrolls II: Daggerfall","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANDf-MtUjn-hvOU2fWUOHx2","order":88},{"name":"The Elder Scrolls III: Morrowind","url":"https://youtube.com/playlist?list=PLc8bJBLJaeZY&si=GMokkKMc4yd7dJPh","order":211},{"name":"The Elder Scrolls IV: Oblivion","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMvk29PA2kWaNtWJfj1Uvxk","order":107},{"name":"The Elder Scrolls: Arena","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANH8bvS-vSkPQZY404la1w6","order":61},{"name":"The Witcher","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO0UaNkGtoNIhAhrTIe_LaK","order":74},{"name":"The Witcher 2: Assassins of Kings","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOcuDRC5Azfha74NVhVlfeH","order":128},{"name":"The Witcher 3: Wild Hunt","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOWnwQiO59fg4s0MUgdXvZt","order":129},{"name":"Tyranny","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP48PhKvlPtxych1vgcs5DV","order":26},{"name":"Vampire: The Masquerade – Bloodlines","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPDWU71-eU9vnOQbkg3EA83","order":119},{"name":"Warhammer 40,000: Rogue Trader","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANY1kQoAFq5bnHeNIMBVQcA","order":193}]},{"category":"Стрелялки","games":[{"name":"Chaser","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAN2O-mxEwByegAEvG95J-o5","order":91},{"name":"Crysis","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANHQ2Fdh4uNDjkpFOFhK1D0","order":195},{"name":"Dead Space","url":"https://youtube.com/playlist?list=PLQdZmXUpEXANG3tl-0Od1MkjaecgQnM26&si=cITjoqr4IgHgqutK","order":79},{"name":"Dead Space 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANn1BYJpYcg4p0USHOU7fae","order":106},{"name":"Doom 64","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO0NIcgWRkTTuYreJM4Zre2","order":25},{"name":"Doom II: Hell on Earth","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANb9099TSMLWi2roVQ6ILgJ","order":14},{"name":"Dusk","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPk695XZg2y86ikReQyQPm6","order":205},{"name":"Final Doom","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOlDUTKRtz5OIkNuWOMdO5N","order":13},{"name":"Half-Life (Оригинал + Blueshift и Opposing Forse)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANmdu7ozrfaavKEPGKl9tls","order":4},{"name":"Hogs of War","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAN6LfQlODqN_lLPEtiuIYTx","order":141},{"name":"Hotline Miami","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPkRUtyPvSBM4f7Vg1w6qfa","order":31},{"name":"Max Payne","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP0Z8aOj9tpCc36-8D5ecZv","order":2},{"name":"Max Payne 2: The Fall of Max Payne","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOLNY44lmvXG3PvlAz7EgeN","order":46},{"name":"S.T.A.L.K.E.R.: Возвращение в Зону","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAPKx6AdfLQ0U-WNtTwm0cu7&si=mAk8sJaGmQluYyCo","order":112},{"name":"S.T.A.L.K.E.R.: Dead Air","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOImlb1NoUvKo0VpRL9DWpV","order":114},{"name":"S.T.A.L.K.E.R.: Lost Alpha","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOiF7_R0E63X05CFIYJTuDE","order":191},{"name":"S.T.A.L.K.E.R.: Shadow of Chernobyl","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOBhFkZOBL3thmJJo2Sm3gE","order":73},{"name":"Serious Sam: The Second Encounter","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAM2aVE8asAyBCGfogzgW-uQ","order":89},{"name":"The Saboteur","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOiwIzGR8ObWWNpq5s5M1ah","order":95},{"name":"The Thing","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANMxhHjPbzS7GPHVeXgHc_3","order":131},{"name":"The Ultimate Doom (+Sigil)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMC9CY5GeRpL2ZHom07CFmX","order":11},{"name":"Total Overdose","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANShRg4S2vWCbc0-ucPlmJn","order":187},{"name":"Warhammer 40,000: Space Marine","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOdTY7oqO4-PofmKgQDTy0C","order":175}]},{"category":"Гонки","games":[{"name":"Grand Theft Auto: San Andreas","url":"https://youtube.com/playlist?list=PLQdZmXUpEXANl1ioevJQg-r4p-RJ9t4wL&si=1_2QzbhcPONJD7T8","order":77},{"name":"Grand Theft Auto: Vice City","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANtNA35qFZU4WyI5WRJd4Gr","order":54},{"name":"L.A. Noire","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOHzpbqJzFnqi3hhn23U8X7","order":184},{"name":"Mafia: The City of Lost Heaven","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPbVmay-pXOx__toNKgpMdU","order":12},{"name":"Need for Speed: Most Wanted","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMtlwHn2jDDaYtYfya44z6M","order":138}]},{"category":"Страшилки","games":[{"name":"Alien: Isolation","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMPedHlOoJZM6B7yfhA0Y2N","order":22},{"name":"Five Nights at Freddy's","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPK-JW36vLilgMogngklvb6","order":151},{"name":"Resident Evil 3: Nemesis","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMXyxhI6jUrXbBXMCjLr_-9","order":121},{"name":"Resident Evil 5","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP3lRhqUZWNQnquAqZZS5ky","order":109},{"name":"Silent Hill","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPO1lVB_PlmZFkmfoRoIzO8","order":16},{"name":"Silent Hill 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPh0jMFKk4_ZyI346TqMVm2","order":20},{"name":"Silent Hill 3","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANHZWw5Yg5Jth02pHgF5W5S","order":146},{"name":"Silent Hill 4: The Room","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANxhtF2jYeRpz1DTBYItTJf","order":160}]},{"category":"Головоломки","games":[{"name":"Мор (Утопия) - Бакалавр","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPLa5vhLTwK9dA9HvJhHwRS","order":101},{"name":"Мор (Утопия) - Гаруспик","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPAMQw7VFAelG2OmNrDk1Bb","order":33},{"name":"Сапер (100х100 2000 мин)","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANBcVONkA0PKY2g3JpFAXuO","order":51},{"name":"Portal","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOSaW2sgAgRLQGSTwZ0Vrd3","order":32},{"name":"Portal 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPfTEPtpvI94zqwqB2Yo3m_","order":163},{"name":"Syberia","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANuOPcrINH-whE6CCvxhZ02","order":50},{"name":"Syberia II","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPzh-yAyLUDEq7_R-pusAEH","order":55}]},{"category":"Бегалки","games":[{"name":"РУСЫ ПРОТИВ ЯЩЕРОВ","url":null,"order":98},{"name":"Call of Cthulhu","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAMKz5c5kT6dmVfdCjf1Oyj-&si=VfagcyhbjK6JBKQv","order":204},{"name":"Dark Messiah of Might and Magic","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOD83rYaprn6-3Vu5nCgyrS","order":149},{"name":"Death Stranding","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANH6c3Ibcb9HGpj4OUVZQJ_","order":117},{"name":"Deus Ex","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAM83HYA4ExX2DLvqACw6KsN&si=9u1RVDJssaJ6G3qY","order":82},{"name":"Deus Ex: Human Revolution","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMD6S4ppAi_P58XDEVSumBi","order":47},{"name":"Devil May Cry 1","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMcAgPmINedRU8QDs2Py7Tf","order":76},{"name":"I Am Alive","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAM4JWVRfzKz_YfSuWMu2ZwK","order":124},{"name":"Lisa: The Painful","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMI1Z44qWTTDUEFXIae5HOz","order":133},{"name":"Little Witch Nobeta","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMBvhDuIXXhDZbn8nPFV48L","order":100},{"name":"Metal Gear Solid","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANRC2dyV6E7fjIUwfPekA8l","order":37},{"name":"Metal Gear Solid 2: Substance","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOJWZfh-1l_10JvAL-q34WA","order":94},{"name":"Mirror's Edge","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMZwANsmWiazTBJx0WEQj1f","order":52},{"name":"Red Dead Redemption 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPJ9LeMRtNbcIKaIXMEzft_","order":116},{"name":"Road 96","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAONXdfno_hxz71Xj10-YX9U","order":159},{"name":"Stray","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMpbR4vXt-u6v0wsMvG5-Fg","order":130},{"name":"The Cat! Porfirio's Adventure","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPDOe3xUWWYXba88J-tKJnp","order":185},{"name":"The Eternal Cylinder","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPQKmspM-jsAi3BFqHEJUHl","order":126},{"name":"UnMetal","url":"https://www.youtube.com/playlist?list=PLQ3tWlPG6QxA","order":213},{"name":"Vampyr","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMVCKJMCo1TVjcZG441NSwG","order":118},{"name":"Yakuza 0","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMa4CZInj6ERGsVenWTzlZv","order":97}]},{"category":"Прыгалки","games":[{"name":"American McGee’s Alice","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP6h5Q-4DJ_kU2RsuVKEOaB","order":87},{"name":"Blasphemous","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP6JA4u-sZjuKgx3FXFRNzS","order":137},{"name":"Celeste","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAO2hBT7KBLze0xKmkhaBgFi","order":140},{"name":"Cuphead","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAOksIje2ezR1tD69zRsj2I9&si=uJZ5bPPNNh-XZA_y","order":110},{"name":"Dangerous Dave in the Haunted Mansion","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPVuWx5ZngQ0ZNhJmNmXLDo","order":134},{"name":"Hollow Knight","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAM4_792KaRHtde5mmervP0V","order":182},{"name":"Jump King","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANIIx1mC5BHl7cbyD3w--yu","order":69},{"name":"Katana Zero","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOKg9j8i6MW6JdcSA4d_OCo","order":68},{"name":"SpongeBob SquarePants: The Cosmic Shake","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOBJj9O-yoNyGPGI1F72Diz","order":201}]},{"category":"Симуляторы","games":[{"name":"Механоиды","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAOzcfLh5KMstAEJcGTJR-6w&si=R7TpjQpgGq6zhGn3","order":81},{"name":"Beholder","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANGxIp3l7on7M5o0duSRvDy","order":60},{"name":"Contraband Police","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMdmqNEC5Lw9juMYq_yCT2F","order":157},{"name":"INZOI","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPlUX9WwEgxMzKpiaSamFBb","order":194},{"name":"My Summer Car","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMzW5GeI_EDKKEy-HdaOaPD","order":199},{"name":"Not For Broadcast","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPvImGbfinBviJct7_uoSRf","order":200},{"name":"Papers, Please","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMzquASqYIxf-toHOz2H8nK","order":96},{"name":"Potion Craft","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOdIUvI7YkZR1JqEEzwaqG2","order":144},{"name":"Sims 2","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMQvGUfXQqCYb61tEn37MB9","order":176},{"name":"Star Wolves","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOPHD4e00AtDHoLodLbeFEf","order":83},{"name":"Vangers","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMq_Wfnmhav-CNzWQapeiUM","order":162}]},{"category":"Рогулики","games":[{"name":"Darkest Dungeon","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMr-1QnuuHlGnBs7QzOLuFG","order":70},{"name":"The Binding of Isaac: Repentance","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOfCWHZEgTN6VvFEtrzbqfp","order":139},{"name":"The Last Spell","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAN3iwtXPXYXd0YIlAavO97i","order":127},{"name":"The Last Stand: Aftermath","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAP4rqCZaaKNmH3-On9Vp02P&si=7sJHzamyOPphBpSu","order":167},{"name":"Golden Light","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMdRAD97cMZvYH4VWZ5Gb9T","order":113}]},{"category":"Читалки","games":[{"name":"Кужлёвка","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANHfkhBvoR5RXfOfmREdqoI","order":104},{"name":"Doki Doki Ragnarok","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPuwvvkbiiY7_t0NtmtK8uY","order":158},{"name":"How To Date A Magical Girl!","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMuUcJ6tV7pXmLo-5cGzQm-","order":90},{"name":"Katawa Shoujo","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOTuIu6NnwK_q4cnF9r1gF1","order":85},{"name":"Max Gentlemen Sexy Business!","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAPm6MZwtfCGtMRPZW8eh5i1&si=dWfDPp4ytsfePLie","order":80},{"name":"NEEDY STREAMER OVERLOAD","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANMDr3IDCVGsUUQr5t1daJq","order":154},{"name":"Night in the Woods","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAOtKDfJNIgZ7CR4XsIoD-Pv","order":150},{"name":"OMORI","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAP7311cG2Pc2nqiKlcSbysh","order":174},{"name":"Suzerain","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAMvHcwyNNK8o6wBYJdeWwhT","order":102},{"name":"The House in Fata Morgana","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPXuxn0e_AZBCqLO8m-rKyL","order":75},{"name":"The House in Fata Morgana: A Requiem for Innocence","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPB6uC-Xmt5t3FrdBIIcNyj","order":143}]},{"category":"Драчки","games":[{"name":"One Punch Man: A Hero Nobody Knows","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPZ42xNqbmDHcenDr7GLRQa","order":155},{"name":"Tekken 3","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAM9al0RMT8FABNSIveCluUx","order":93}]},{"category":"Киноигоры","games":[{"name":"The Dark Pictures Anthology: House of Ashes","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXAPVwSyj8MjW5QWsMmtFsLaa","order":168},{"name":"The Dark Pictures Anthology: Man of Medan","url":"https://www.youtube.com/playlist?list=PLQdZmXUpEXANM6EIL7TaBC9S2WXodmAzS","order":170}]},{"category":"Выживалки","games":[{"name":"Raft","url":"https://youtube.com/playlist?list=PLQdZmXUpEXAObjhfZavE_yII0Gr4iXhGH&si=9LUhMHx42CP8zdFD","order":208}]}];
+
+const K = 2;
+const MEMES = [
+  'images/arc4.png','images/atom6.png','images/baldur6.png','images/baldur8.png',
+  'images/dav8.png','images/dd3.png','images/disco1.png','images/drgage5.png',
+  'images/fnv11.png','images/hifm6.png','images/kotor5.png','images/nwn5.png',
+  'images/tfallout9.png','images/wc8.png','images/witcher1.png','images/witcher2,33.png'
+];
+
+const track = document.getElementById('track');
+let view = 'hub';
+
+function setView(v) {
+  view = v;
+  const x = v === 'stream' ? '0%' : v === 'hub' ? '-33.3333%' : '-66.6666%';
+  track.style.transform = 'translateX(' + x + ')';
+}
+
+document.getElementById('go-stream').addEventListener('click', () => setView('stream'));
+document.getElementById('go-archive').addEventListener('click', () => setView('archive'));
+document.getElementById('back-from-stream').addEventListener('click', () => setView('hub'));
+document.getElementById('back-from-archive').addEventListener('click', () => setView('hub'));
+
+let touchX = null;
+const viewport = document.getElementById('viewport');
+viewport.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; }, {passive:true});
+viewport.addEventListener('touchend', (e) => {
+  if (touchX == null) return;
+  const dx = e.changedTouches[0].screenX - touchX;
+  touchX = null;
+  if (Math.abs(dx) < 50) return;
+  if (view === 'hub') {
+    if (dx > 0) setView('stream');
+    else setView('archive');
+  } else if (view === 'stream' && dx < 0) setView('hub');
+  else if (view === 'archive' && dx > 0) setView('hub');
+}, {passive:true});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') setView('hub');
+  if (view === 'hub' && (e.key === 'ArrowLeft' || e.key === 'a')) setView('stream');
+  if (view === 'hub' && (e.key === 'ArrowRight' || e.key === 'd')) setView('archive');
+});
+
+function rnd(a, b) { return a + Math.random() * (b - a); }
+
+function fillBg(el, archive) {
+  el.innerHTML = '';
+  MEMES.forEach((src) => {
+    const w = 300 + Math.round(Math.random() * 280);
+    const h = Math.round(w * 9 / 16);
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    img.className = 'float-img' + (archive ? ' archive' : '');
+    img.loading = 'lazy';
+    const top = rnd(-15, 85);
+    const left = rnd(-20, 85);
+    const mk = () => ({
+      x: rnd(-45, 45) + 'vw',
+      y: rnd(-45, 45) + 'vh',
+      r: rnd(-28, 28) + 'deg'
+    });
+    const p1 = mk(), p2 = mk(), p3 = mk(), p4 = mk();
+    // 20% slower than before
+    const dur = (16 + Math.random() * 18) * 1.25;
+    const delay = -Math.random() * dur;
+    img.style.cssText = [
+      'width:' + w + 'px',
+      'height:' + h + 'px',
+      'top:' + top + '%',
+      'left:' + left + '%',
+      '--x1:' + p1.x, '--y1:' + p1.y, '--r1:' + p1.r,
+      '--x2:' + p2.x, '--y2:' + p2.y, '--r2:' + p2.r,
+      '--x3:' + p3.x, '--y3:' + p3.y, '--r3:' + p3.r,
+      '--x4:' + p4.x, '--y4:' + p4.y, '--r4:' + p4.r,
+      'animation-duration:' + dur + 's',
+      'animation-delay:' + delay + 's'
+    ].join(';');
+    el.appendChild(img);
+  });
+}
+fillBg(document.getElementById('bg-stream'), false);
+fillBg(document.getElementById('bg-archive'), true);
+
+function fmtChance(c) {
+  if (c >= 1) return c.toFixed(2) + '%';
+  if (c >= 0.1) return c.toFixed(3) + '%';
+  return c.toFixed(4) + '%';
+}
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+let ranked = [];
+async function loadStream() {
+  let lots = [];
+  try {
+    const res = await fetch('data.json?t=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      lots = data.lots || data || [];
+    }
+  } catch (e) {}
+  if (!lots.length) {
+    lots = (EMBEDDED_STREAM && EMBEDDED_STREAM.lots) ? EMBEDDED_STREAM.lots : [];
+  }
+  const sorted = [...lots].sort((a,b) => (b.amount||0) - (a.amount||0) || String(a.name).localeCompare(String(b.name), 'ru'));
+  const weights = sorted.map(g => Math.pow(Number(g.amount) || 0, K));
+  const total = weights.reduce((s,w) => s+w, 0);
+  ranked = sorted.map((g,i) => ({
+    name: g.name,
+    amount: Number(g.amount) || 0,
+    chance: total > 0 ? weights[i] / total * 100 : 0,
+    rank: i + 1
+  }));
+  renderStream();
+}
+function renderStream() {
+  const q = document.getElementById('stream-search').value.trim().toLowerCase();
+  const list = q ? ranked.filter(g => g.name.toLowerCase().includes(q)) : ranked;
+  const body = document.getElementById('stream-body');
+  if (!list.length) {
+    body.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--muted)">Ничего не найдено</td></tr>';
+  } else {
+    body.innerHTML = list.map(g => {
+      const rc = g.rank <= 3 ? ' rank-' + g.rank : '';
+      return '<tr><td><div class="game-cell"><span class="rank' + rc + '">' + g.rank + '</span><span>' + esc(g.name) +
+        '</span></div></td><td class="pts">' + g.amount + '</td><td class="chance">' + fmtChance(g.chance) + '</td></tr>';
+    }).join('');
+  }
+  document.getElementById('stream-foot').textContent = q
+    ? 'Найдено: ' + list.length + ' из ' + ranked.length
+    : 'Всего игр: ' + ranked.length;
+}
+document.getElementById('stream-search').addEventListener('input', renderStream);
+
+let cats = [];
+let activeCat = 'Все';
+let archiveSort = 'chrono'; // chrono | alpha
+
+function gameOrder(g) {
+  const o = Number(g.order);
+  return Number.isFinite(o) ? o : 99999;
+}
+
+async function loadArchive() {
+  try {
+    const res = await fetch('completed-games.json?t=' + Date.now());
+    if (res.ok) cats = await res.json();
+  } catch (e) {}
+  if (!Array.isArray(cats) || !cats.length) cats = Array.isArray(EMBEDDED_COMPLETED) ? EMBEDDED_COMPLETED : [];
+  const chips = document.getElementById('archive-chips');
+  chips.innerHTML = ['Все'].concat(cats.map(c => c.category)).map(name =>
+    '<button type="button" class="chip' + (name===activeCat?' active':'') + '" data-cat="' + esc(name) + '">' + esc(name) + '</button>'
+  ).join('');
+  chips.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeCat = btn.getAttribute('data-cat');
+      chips.querySelectorAll('.chip').forEach(b => b.classList.toggle('active', b.getAttribute('data-cat') === activeCat));
+      renderArchive();
+    });
+  });
+  document.querySelectorAll('#archive-sort .sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      archiveSort = btn.getAttribute('data-sort') || 'chrono';
+      document.querySelectorAll('#archive-sort .sort-btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderArchive();
+    });
+  });
+  renderArchive();
+}
+function renderArchive() {
+  const q = document.getElementById('archive-search').value.trim().toLowerCase();
+  const total = cats.reduce((s,c) => s + (c.games ? c.games.length : 0), 0);
+  const sortFn = archiveSort === 'alpha'
+    ? (a, b) => String(a.name).localeCompare(String(b.name), 'ru', { sensitivity: 'base' })
+    : (a, b) => gameOrder(a) - gameOrder(b) || String(a.name).localeCompare(String(b.name), 'ru', { sensitivity: 'base' });
+
+  if (archiveSort === 'chrono' && activeCat === 'Все' && !q) {
+    // Flat chronological list across all genres
+    const all = [];
+    cats.forEach(c => (c.games || []).forEach(g => all.push({ ...g, category: c.category })));
+    all.sort(sortFn);
+    const el = document.getElementById('archive-list');
+    el.innerHTML = '<article class="cat-block"><h2>Хронология<span>' + all.length + '</span></h2>' +
+      all.map(g => {
+        const meta = '<span style="color:var(--muted);font-size:0.85rem;margin-left:0.5rem">' + esc(g.category) + '</span>';
+        return g.url
+          ? '<a href="' + esc(g.url) + '" target="_blank" rel="noreferrer"><span>' + esc(g.name) + meta + '</span> <span style="color:var(--archive)">↗</span></a>'
+          : '<div class="nolink"><span>' + esc(g.name) + meta + '</span></div>';
+      }).join('') + '</article>';
+    document.getElementById('archive-foot').textContent = 'Всего пройдено: ' + total;
+    return;
+  }
+
+  const filtered = cats
+    .filter(c => activeCat === 'Все' || c.category === activeCat)
+    .map(c => ({
+      category: c.category,
+      games: (c.games || [])
+        .filter(g => !q || String(g.name).toLowerCase().includes(q))
+        .slice()
+        .sort(sortFn)
+    }))
+    .filter(c => c.games.length);
+  const shown = filtered.reduce((s,c) => s + c.games.length, 0);
+  const el = document.getElementById('archive-list');
+  if (!filtered.length) {
+    el.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--muted)">Ничего не найдено</p>';
+  } else {
+    el.innerHTML = filtered.map(c =>
+      '<article class="cat-block"><h2>' + esc(c.category) + '<span>' + c.games.length + '</span></h2>' +
+      c.games.map(g => g.url
+        ? '<a href="' + esc(g.url) + '" target="_blank" rel="noreferrer">' + esc(g.name) + ' <span style="color:var(--archive)">↗</span></a>'
+        : '<div class="nolink">' + esc(g.name) + '</div>'
+      ).join('') + '</article>'
+    ).join('');
+  }
+  document.getElementById('archive-foot').textContent =
+    (q || activeCat !== 'Все') ? 'Найдено: ' + shown + ' из ' + total : 'Всего пройдено: ' + total;
+}
+document.getElementById('archive-search').addEventListener('input', renderArchive);
+
+setView('hub');
+loadStream();
+loadArchive();
+</script>
+</body>
+</html>

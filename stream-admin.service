@@ -1,0 +1,14 @@
+[Unit]
+Description=Stream Games Admin Panel
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/stream-games
+ExecStart=/usr/bin/python3 /var/www/stream-games/admin_app.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

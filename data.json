@@ -141,11 +141,6 @@
       "contributors": []
     },
     {
-      "name": "Darkwood",
-      "amount": 3,
-      "contributors": []
-    },
-    {
       "name": "Planetbase",
       "amount": 1,
       "contributors": []
@@ -637,7 +632,7 @@
     },
     {
       "name": "Divinity: Original Sin",
-      "amount": 5,
+      "amount": 6,
       "contributors": []
     },
     {
@@ -927,6 +922,16 @@
     },
     {
       "name": "Teenage Mutant Ninja Turtles (1989)",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Pool of Radiance: Ruins of Myth Drannor",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Jade Empire",
       "amount": 1,
       "contributors": []
     }

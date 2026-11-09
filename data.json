@@ -76,11 +76,6 @@
       "contributors": []
     },
     {
-      "name": "Dishonored",
-      "amount": 2,
-      "contributors": []
-    },
-    {
       "name": "The Mortuary Assistant",
       "amount": 2,
       "contributors": []
@@ -837,7 +832,7 @@
     },
     {
       "name": "Gothic: Remake",
-      "amount": 1,
+      "amount": 2,
       "contributors": []
     },
     {
@@ -932,6 +927,11 @@
     },
     {
       "name": "Jade Empire",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Woman Simulator",
       "amount": 1,
       "contributors": []
     }

@@ -261,11 +261,6 @@
       "contributors": []
     },
     {
-      "name": "Мор (утопия)",
-      "amount": 1,
-      "contributors": []
-    },
-    {
       "name": "Pentiment",
       "amount": 1,
       "contributors": []
@@ -927,6 +922,11 @@
     },
     {
       "name": "Woman Simulator",
+      "amount": 1,
+      "contributors": []
+    },
+    {
+      "name": "Dishonored 2",
       "amount": 1,
       "contributors": []
     }

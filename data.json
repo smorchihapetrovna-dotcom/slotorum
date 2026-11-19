@@ -77,7 +77,7 @@
     },
     {
       "name": "The Mortuary Assistant",
-      "amount": 2,
+      "amount": 3,
       "contributors": []
     },
     {
@@ -613,11 +613,6 @@
     {
       "name": "The Last of Us",
       "amount": 1,
-      "contributors": []
-    },
-    {
-      "name": "Divinity: Original Sin",
-      "amount": 6,
       "contributors": []
     },
     {
